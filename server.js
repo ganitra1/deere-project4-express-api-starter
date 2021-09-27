@@ -27,7 +27,16 @@ app.use(cors());
 app.use(cookieParser());
 app.use(express.json());
 app.use(methodOverride("_method"));
+app.use((req, res, next) => {
+  let logStr = `${req.method} ${req.url}`;
 
+  if (Object.keys(req.body).length !== 0) {
+    logStr += ` -- DATA: ${JSON.stringify(req.body)}`;
+  }
+
+  console.log(logStr);
+  next();
+});
 // HOMEPAGE
 app.get("/", (req, res) => {
   res.json({ message: "express api app is working" });
@@ -35,6 +44,8 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", require("./controllers/authController.js"));
 app.use("/api/users", require("./controllers/usersController.js"));
+app.use("/api/authors", require('./controllers/authorsController.js'));
+
 
 app.listen(process.env.PORT, () => {
   console.log("Nodemon listening");
