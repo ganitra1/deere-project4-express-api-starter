@@ -13,7 +13,8 @@ router.get("/profile/:id", async (req, res) => {
 });
 
 router.get("/", async (req, res) => {
-  let authors = await AuthorModel.findAll();
+  let authors = await AuthorModel.findAll({include:TitleModel});
+
   res.json({ authors });
 });
 
@@ -40,6 +41,7 @@ router.delete("/:id", async (req, res) => {
   });
 });
 
+
 router.post('/:id/newtitle', async (req, res) => {
   const authorId = req.params.id;
 	req.body.authorId = authorId;
@@ -50,5 +52,15 @@ router.post('/:id/newtitle', async (req, res) => {
   });
   res.json({ author });
 });
+
+router.delete('/:id/titles/:titleId',async(req,res)=> {
+  await TitleModel.destroy({
+    where: {id:req.params.titleId},
+});
+res.json({
+  message: `Title with id ${req.params.titleId} was deleted`,
+});
+});
+
 
 module.exports = router;
